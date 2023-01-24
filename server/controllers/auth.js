@@ -85,3 +85,28 @@ function validateEmail(email) {
     /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return chkMail.test(email);
 }
+
+export const login = async (req, res) => {
+  try {
+    const { emailOrusername,password } = req.body;
+    let user = await User.findOne({ email: emailOrusername});
+
+    //Check if email or username exists
+    if (!user) {
+      user = await User.findOne({ username: emailOrusername });
+      if (!user) {
+        return res.status(400).json({ msg: "Email or username does not exist!" });
+      }
+    }
+    //Check if password is correct
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch)
+      return res.status(400).json({ msg: "Incorrect Passowrd! " });
+
+    const token = jwt.sign({ id: user._id }, process.env.ACCESS_TOKEN_SECRET);
+    res.status(200).json({ msg: "Login success! ",token, user });
+   
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

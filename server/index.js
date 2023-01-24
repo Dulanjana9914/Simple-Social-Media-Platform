@@ -8,9 +8,14 @@ import multer from "multer";
 import helmet from "helmet";
 import path from "path";
 import { fileURLToPath } from "url";
-
+import { authenticate } from "./middleware/authenticate.js";
+import { addPost } from "./controllers/posts.js";
 import { register } from "./controllers/auth.js";
-import loginRoutes from "./routes/auth.js";
+
+//Import routes files
+import loginRoutes from "./routes/authRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import postRoutes from "./routes/postRoutes.js";
 
 //Configure
 const __filename = fileURLToPath(import.meta.url);
@@ -38,8 +43,11 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 //Routes
-app.post("/auth/register", upload.single("picture"), register);
+app.post("/auth/register", upload.single("image"), register);
+app.post("/posts", authenticate, upload.single("image"), addPost);
 app.use("/auth", loginRoutes);
+app.use("/users", userRoutes);
+app.use("/posts", postRoutes);
 
 //Mongoose connection
 const PORT = process.env.PORT || 3001;  //keep backup port to run the server

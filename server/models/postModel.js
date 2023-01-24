@@ -12,7 +12,8 @@ const postSchema = mongoose.Schema(
     },
     picture: String,
     savedDate: {
-        type: String
+        type: String,
+        required: true,
     },
     likes: {
       type: Map,

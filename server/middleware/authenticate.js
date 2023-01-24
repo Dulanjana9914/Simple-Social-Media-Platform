@@ -8,7 +8,7 @@ export const authenticate = async (req, res, next) => {
       return res.status(403).send("Please login!");
     }
 
-    if (token.startsWith("Authentication ")) {
+    if (token.startsWith("Bearer ")) {
        token = token.slice(7, token.length).trimLeft();
       }
       

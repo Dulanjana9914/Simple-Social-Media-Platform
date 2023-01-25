@@ -1,11 +1,10 @@
 import "../../CSS/userFunction.css";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
 import axios from "axios";
 import { showErrMsg, showSuccessMsg } from "../../utils/notification/Notification";
 import { isEmpty, isEmail, isLength,isMatch } from "../../utils/validation/Validation.js";
 import PasswordChecklist from "react-password-checklist";
-import { Store } from "react-notifications-component";
 import {
   Box,
   TextField,
@@ -62,31 +61,16 @@ function Register() {
     if (!isMatch(password, cf_password))
       return setUser({ ...user, err: "Password and confirm password not matched!", success: "" });
     try {
-      const res = await axios.post("http://localhost:8070/auth/register", {
+       await axios.post("http://localhost:8070/auth/register", {
         name,
         email,
         username,
         password
+      }).then((res) => {
+       navigate("/");
+       setUser({ ...user, err: "", success: res.data.msg });
       });
-
-      setUser({ ...user, err: "", success: res.data.msg });
-      Store.addNotification({
-        title: "Account Created Successfully",
-        animationIn: ["animate__animated", "animate__fadeIn"],
-        animationOut: ["animate__animated", "animate__fadeOut"],
-        type: "success",
-        insert: "top",
-        container: "top-right",
-
-        dismiss: {
-          duration: 2500,
-          onScreen: true,
-          showIcon: true,
-        },
-
-        width: 400,
-      });
-      navigate("/login");
+    
     } catch (err) {
       err.response.data.msg &&
         setUser({ ...user, err: err.response.data.msg, success: "" });
@@ -208,7 +192,16 @@ function Register() {
             >
               Register
             </button>
-          </form>
+        </form>
+        <br></br> <br></br>
+         &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;
+        <Link to="/" style={{
+          textDecoration: `underline`, textAlign: `center`,
+          fontStyle: `italic`, color: `#6b5c06`, fontSize: `20px`, fontWeight: `bold`
+        }}>
+         
+          Already Have an Account? Login Here...
+        </Link>
         </div>
       </div>
   );

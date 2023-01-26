@@ -1,14 +1,16 @@
 import { Box, useMediaQuery } from "@mui/material";
-import { useSelector } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
 import Navbar from "screens/navbar";
 import  MyPostWidget  from "screens/widgets/MyPostWidget";
 import PostsWidget from "screens/widgets/PostsWidget";
 import ProfileImage from "components/ProfileImage";
+import { setLogout } from "state";
 
 const HomePage = () => {
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
   const { _id,name,username, avatar } = useSelector((state) => state.user);
   const logo = "https://res.cloudinary.com/dl99x/image/upload/v1674659975/attachment_86137168_nttz7u.png";
+  const dispatch = useDispatch();
   return (
     <Box>
       <Navbar />
@@ -20,21 +22,22 @@ const HomePage = () => {
         justifyContent="space-between"
         bgcolor={"#f0f2f5"}
       >
-        <Box
-          paddingLeft="3%"
-          paddingTop="3%"
+      <Box
+        paddingLeft="3%"
+        paddingTop="3%"
         >
-      <img
+        <img
         style={{ objectFit: "cover", borderRadius: "20%" }}
         width= "180px"
         height= "180px"
         alt="logo"
         src={logo}
       />
-       </Box>
-        <Box
+      </Box>
+       <Box
           flexBasis={isNonMobileScreens ? "42%" : undefined}
           mt={isNonMobileScreens ? undefined : "2rem"}
+          
         >
           <MyPostWidget avatar={avatar} />
           <PostsWidget userId={_id} />
@@ -66,6 +69,20 @@ const HomePage = () => {
           }}>
             {username}
           </p>
+          <br></br>
+          <button
+            style={{
+              color: "white",
+              backgroundColor: "black",
+              borderRadius: "10px",
+              padding: "0.5rem 1rem",
+              fontSize: "1.2rem",
+              fontWeight: "bold",
+              marginTop: "1rem"
+            }}
+            onClick={() => dispatch(setLogout())}>
+            Log Out
+          </button>
         </Box>
       </Box>
     </Box>

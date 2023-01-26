@@ -1,4 +1,4 @@
-import {Typography,} from "@mui/material";
+import {Typography} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import StyleFlex from "../../components/StyleFlex";
 
@@ -24,7 +24,7 @@ const Navbar = () => {
           }}
         >
           {appName}
-        </Typography>
+          </Typography>
        </StyleFlex>    
     </StyleFlex>
   );

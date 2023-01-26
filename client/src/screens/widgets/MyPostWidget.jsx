@@ -72,6 +72,7 @@ const MyPostWidget = ({ avatar }) => {
           borderRadius="5px"
           mt="1rem"
           p="1rem"
+          
         >
           <Dropzone
             acceptedFiles=".jpg,.jpeg,.png"
@@ -115,10 +116,10 @@ const MyPostWidget = ({ avatar }) => {
 
       <StyleFlex>
         <StyleFlex gap="0.25rem" onClick={() => setIsImage(!isImage)}>
-          <ImageOutlined sx={{ color: "greenyellow" }} />
+          <ImageOutlined sx={{ color: "#66ce63" }} />
           <Typography
-            color={"greenyellow"}
-            sx={{ "&:hover": { cursor: "pointer", color: "green" } }}
+            color={"#66ce63"}
+            sx={{ "&:hover": { cursor: "pointer", color: "#66ce63" } }}
           >
             Image
           </Typography>
@@ -129,7 +130,7 @@ const MyPostWidget = ({ avatar }) => {
           </>
         ) : (
           <StyleFlex gap="0.25rem">
-            <MoreHorizOutlined sx={{ color: "greenyellow" }} />
+            <MoreHorizOutlined sx={{ color: "#66ce63" }} />
           </StyleFlex>
         )}
 
@@ -137,9 +138,13 @@ const MyPostWidget = ({ avatar }) => {
           disabled={!savedBy}
           onClick={handlePost}
           sx={{
-            color: "black",
-            backgroundColor: "green",
-            borderRadius: "3rem",
+            fontWeight: "bold",
+            fontSize: "1.25rem",
+            backgroundColor: "#66ce63",
+            borderRadius: "2rem",
+            padding: "0.5rem 2rem",
+            "&:hover": { backgroundColor: "green" },
+            color: "white"
           }}
         >
           POST

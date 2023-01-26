@@ -54,15 +54,39 @@ const PostWidget = ({
           <StyleFlex gap="0.3rem">
             <IconButton onClick={patchLike}>
               {isLiked ? (
-                <FavoriteOutlined sx={{ color: "black" }} />
+                <FavoriteOutlined sx={{ color: "red" }} />
               ) : (
                 <FavoriteBorderOutlined />
               )}
             </IconButton>
-            <StyleFlex gap="8rem">
-            <Typography>{likeCount}</Typography>
-            <Typography>{username1}</Typography>
-            <Typography>{savedDate+" d"}</Typography>
+            <StyleFlex >
+              <Typography
+                style={{
+                  fontWeight: "bold"
+                }}
+              >{likeCount}</Typography>
+            
+            <Typography
+                style={{
+                  fontWeight: "bold",
+                  color: "black",
+                  fontSize: "1.2rem",
+                  fontFamily: "sans-serif",
+                  fontStyle: "italic",
+                  marginLeft: "12rem",
+                  marginRight: "10rem",
+                }}
+              >
+              {username1}
+              </Typography>
+              <Typography
+                style={{
+                fontWeight: "bold",
+                color: "grey"
+                }}
+              >
+              {savedDate + "d"}
+              </Typography>
             </StyleFlex>
             </StyleFlex>    
         </StyleFlex>

@@ -6,15 +6,12 @@ const postSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    username: {
-      type: String,
-      required: true,
-    },
     picture: String,
     savedDate: {
         type: String,
         required: true,
     },
+    savedBy: String,
     likes: {
       type: Map,
       of: Boolean,

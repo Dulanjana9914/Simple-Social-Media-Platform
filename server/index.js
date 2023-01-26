@@ -8,7 +8,7 @@ import multer from "multer";
 import helmet from "helmet";
 import path from "path";
 import { fileURLToPath } from "url";
-import { authenticate } from "./middleware/authenticate.js";
+import { verifyToken } from "./middleware/authenticate.js";
 import { addPost } from "./controllers/posts.js";
 import { register } from "./controllers/auth.js";
 
@@ -44,7 +44,7 @@ const upload = multer({ storage });
 
 //Routes
 app.post("/auth/register", upload.single("avatar"), register);
-app.post("/posts", authenticate, upload.single("avatar"), addPost);
+app.post("/posts", verifyToken, upload.single("picture"), addPost);
 app.use("/auth", loginRoutes);
 app.use("/users", userRoutes);
 app.use("/posts", postRoutes);

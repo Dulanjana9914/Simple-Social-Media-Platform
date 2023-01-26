@@ -1,10 +1,10 @@
 import express from "express";
 import {getUser} from "../controllers/users.js";
-import {authenticate} from "../middleware/authenticate.js";
+import {verifyToken} from "../middleware/authenticate.js";
 
 const router = express.Router();
 
 //Routes
-router.get("/:id", authenticate, getUser);
+router.get("/:id", verifyToken, getUser);
 
 export default router;

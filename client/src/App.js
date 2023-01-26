@@ -12,8 +12,8 @@ function App() {
         <Routes>
             <Route path="/" exact element={<LoginPage />} />
             <Route path="/register" exact element={<Register />} />
-            <Route path="/posts" element={isAuth ? <HomePage /> : <Navigate to="/" />} />
-          </Routes>
+            <Route path="/posts"  element={isAuth ? <HomePage /> : <Navigate to="/" />} />
+        </Routes>
      </BrowserRouter>  
     </div>
   );

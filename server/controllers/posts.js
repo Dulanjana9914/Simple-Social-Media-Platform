@@ -6,14 +6,14 @@ const savedDate = date.toString();
 //Add a post
 export const addPost = async (req, res) => {
   try {
-    const { userId, picture } = req.body;
+    const { userId, picture,savedBy } = req.body;
       const user = await User.findById(userId);
     
       const newPost = new Posts({
       userId,
-      username: user.username,
       picture,
       savedDate,
+      savedBy,
       likes: {}
     });
     await newPost.save();

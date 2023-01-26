@@ -23,13 +23,11 @@ const PostWidget = ({
   const loggedInUserId = useSelector((state) => state.user._id);
   const isLiked = Boolean(likes[loggedInUserId]);
   const likeCount = Object.keys(likes).length;
-  const username1 = savedBy;
-  const descriptions = description;
   const date1 = new Date();
   const date2= new Date(savedDate);
   const daysCount = date1.getTime() - date2.getTime();
   const difference=Math.floor(daysCount / (1000 * 3600 * 24))
-  console.log("DDDD"+descriptions);
+
   const patchLike = async () => {
     const response = await fetch(`http://localhost:8070/posts/${postId}/like`, {
       method: "PATCH",
@@ -45,7 +43,7 @@ const PostWidget = ({
 
   return (
     <WidgetWrapper m="2rem 0">
-      <h5>{description }</h5>
+      <h4>{description }</h4>
       {picture && (
         <img
           width="100%"
@@ -83,7 +81,7 @@ const PostWidget = ({
                   marginRight: "15rem",
                 }}
               >
-              {username1}
+              {savedBy}
               </Typography>
               <Typography
                 style={{

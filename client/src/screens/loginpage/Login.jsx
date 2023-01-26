@@ -1,5 +1,5 @@
 import "../../CSS/userFunction.css";
-import React, { useState } from "react";
+import React, { useState,useRef } from "react";
 import { useNavigate,Link } from "react-router-dom";
 import axios from "axios";
 import { showErrMsg, showSuccessMsg } from "../../utils/notification/Notification";
@@ -11,6 +11,7 @@ import {
   TextField,
   useMediaQuery,
 } from "@mui/material";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const initialState = {
   emailOrusername: "",
@@ -25,6 +26,9 @@ function Login() {
   const dispatch = useDispatch();
   const { emailOrusername,password, err, success } = user;
   const isNonMobile = useMediaQuery("(min-width:600px)");
+  const SITE_KEY = '6LcsVi0kAAAAAIILungS49qYDy5DxKJfU6MIhE63';
+  const [captcha, setCaptcha] = useState("");
+  const captchaRef=useRef('');
   const handleChangeInput = (e) => {
     const { name, value } = e.target;
     setUser({ ...user, [name]: value, err: "", success: "" });
@@ -32,6 +36,7 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    captchaRef.current.reset();
     //Validations
     if (
       isEmpty(emailOrusername) ||
@@ -46,7 +51,8 @@ function Login() {
     try {
        await axios.post("http://localhost:8070/auth/login", {
         emailOrusername,
-        password
+        password,
+        captcha
       }).then((res) => {
         navigate("/posts");
         const loggedIn = res.data; 
@@ -64,6 +70,9 @@ function Login() {
       setUser({ ...user, err: err.response.data.msg, success: "" });
     }
   };
+    const captchaChange = (value) => {
+    setCaptcha(value);
+    };
 
   return (
     <div>
@@ -105,7 +114,15 @@ function Login() {
                 onChange={handleChangeInput}
                 required
               />
-             <br></br><br></br>
+          <br></br><br></br><br></br>
+          <div>
+          <ReCAPTCHA
+            sitekey={SITE_KEY}
+            onChange={captchaChange}
+            ref={captchaRef}
+            ></ReCAPTCHA>
+          </div>
+          <br></br>
             <button
               type="submit"
               className="btn-register"

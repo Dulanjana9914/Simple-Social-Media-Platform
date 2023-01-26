@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import User from "../models/userModel.js";
-
+import axios from "axios";
 /*User Register*/
 export const register = async (req, res) => {
   try {
@@ -10,15 +10,20 @@ export const register = async (req, res) => {
       email,
       username,
       password,
-      avatar
+      avatar,
+      captcha
     } = req.body;
-      
+    const captcha_KEY = process.env.captcha_KEY;
+             
     /*validate data*/
     if (!name || !email || !username || !password)
       return res.status(400).json({ msg: "Please fill in all fields!" });
 
     if (!validateEmail(email))
       return res.status(400).json({ msg: "Invalid email!" });
+    
+    if (!captcha)
+      return res.status(400).json({ msg: "Please verify captcha!" });
 
     const user = await User.findOne({ email });
     if (user)
@@ -62,19 +67,33 @@ export const register = async (req, res) => {
       .status(400)
       .json({ msg: "Password must have at least one numeric value!" });
 
-
     const saltpwd = await bcrypt.genSalt();
     const passwordHash = await bcrypt.hash(password, saltpwd);
-
-    const newUser = new User({
-      name,
-      email,
-      username,
-      password: passwordHash,
-      avatar
+    console.log("PPADWP" + captcha);
+    
+    //validate captcha
+    await axios(
+      {
+       url:`https://www.google.com/recaptcha/api/siteverify?secret=${captcha_KEY}&response=${captcha}`,
+       method: 'POST',
+      }).then(async({data}) => {
+         console.log(data);
+        if (data.success) {
+        const newUser = new User({
+           name,
+           email,
+           username,
+           password: passwordHash,
+           avatar
     });
-    await newUser.save();
-    res.status(201).json({msg: "Registration Successful!"});
+         const saveduser =await newUser.save();
+         res.status(201).json({msg: "Registration Successful!"});
+        }
+      }
+      ).catch((err) => {
+        console.log(err);
+      });
+    
   } catch (error) {
     res.status(500).json({error: error.message });
   }
@@ -88,7 +107,8 @@ function validateEmail(email) {
 
 export const login = async (req, res) => {
   try {
-    const { emailOrusername,password } = req.body;
+    const { emailOrusername, password, captcha } = req.body;
+    const captcha_KEY = process.env.captcha_KEY;
     let user = await User.findOne({ email: emailOrusername});
 
     //Check if email or username exists
@@ -102,10 +122,27 @@ export const login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)
       return res.status(400).json({ msg: "Incorrect Passowrd! " });
+    
+     if (!captcha)
+      return res.status(400).json({ msg: "Please verify captcha!" });
 
-    const token = jwt.sign({ id: user._id }, process.env.ACCESS_TOKEN_SECRET);
-    res.status(200).json({ msg: "Login success! ",token, user });
-   
+    
+    //validate captcha
+    await axios(
+      {
+       url:`https://www.google.com/recaptcha/api/siteverify?secret=${captcha_KEY}&response=${captcha}`,
+       method: 'POST',
+      }).then(async({data}) => {
+         console.log(data);
+        if (data.success) {
+          const token = jwt.sign({ id: user._id }, process.env.ACCESS_TOKEN_SECRET);
+          res.status(200).json({ msg: "Login success! ", token, user });
+        }
+      }
+    ).catch((err) => {
+      console.log(err);
+    }
+    );
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

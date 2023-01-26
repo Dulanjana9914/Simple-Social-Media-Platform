@@ -1,5 +1,5 @@
 import "../../CSS/userFunction.css";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useNavigate,Link } from "react-router-dom";
 import axios from "axios";
 import { showErrMsg, showSuccessMsg } from "../../utils/notification/Notification";
@@ -10,6 +10,8 @@ import {
   TextField,
   useMediaQuery,
 } from "@mui/material";
+import ReCAPTCHA from "react-google-recaptcha";
+
 
 const initialState = {
   name: "",
@@ -20,13 +22,15 @@ const initialState = {
   err: "",
   success: "",
 };
- 
+const SITE_KEY ='6LcsVi0kAAAAAIILungS49qYDy5DxKJfU6MIhE63';
+
 function Register() {
   const [user, setUser] = useState(initialState);
   const navigate = useNavigate();
-   
-  const { name, email, username, password, cf_password, err, success } =
-    user;
+  const [captcha, setCaptcha] = useState("");
+  const captchaRef=useRef('');
+  
+  const { name, email, username, password, cf_password, err, success } =user;
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const handleChangeInput = (e) => {
     const { name, value } = e.target;
@@ -35,6 +39,8 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    captchaRef.current.reset();
     //Validations
     if (
       isEmpty(name) ||
@@ -65,8 +71,10 @@ function Register() {
         name,
         email,
         username,
-        password
-      }).then((res) => {
+        password,
+        captcha
+       }, 
+       ).then((res) => {
        navigate("/");
        setUser({ ...user, err: "", success: res.data.msg });
       });
@@ -76,6 +84,11 @@ function Register() {
         setUser({ ...user, err: err.response.data.msg, success: "" });
     }
   };
+
+  const captchaChange = (value) => {
+    setCaptcha(value);
+  };
+
 
   return (
     <div>
@@ -181,8 +194,16 @@ function Register() {
               All fields with * are required.
             </label>{" "}
           <br></br> <br></br>
-          
-            <button
+          <div>
+          <ReCAPTCHA
+            sitekey={SITE_KEY}
+            onChange={captchaChange}
+            ref={captchaRef}
+            ></ReCAPTCHA>
+          </div>
+          <br></br>
+
+           <button
               type="submit"
               className="btn-register"
               style={{

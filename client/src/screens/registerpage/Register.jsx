@@ -180,7 +180,8 @@ function Register() {
             <label className="t-form-label3">
               All fields with * are required.
             </label>{" "}
-            <br></br> <br></br>
+          <br></br> <br></br>
+          
             <button
               type="submit"
               className="btn-register"

@@ -20,24 +20,28 @@ import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state";
+import axios from "axios";
 
 const MyPostWidget = ({ avatar }) => {
   const dispatch = useDispatch();
   const [isImage, setIsImage] = useState(false);
   const [image, setImage] = useState(null);
-  const [savedBy, setPost] = useState("");
-  const { _id } = useSelector((state) => state.user);
+  const [description, setDescription] = useState("");
+  const { _id,username } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
-
+  const [imagepath, setImagepath] = useState("");
+  const [data, setData] = useState("");
+  
   const handlePost = async () => {
     const formData = new FormData();
     formData.append("userId", _id);
-    formData.append("savedBy", savedBy);
     if (image) {
-      formData.append("avatar", image);
-      formData.append("picture", image.name);
+      await changeAvatar();
+      formData.append("picture",imagepath);
     }
+     formData.append("savedBy", username);
+     formData.append("description", description);
 
     const response = await fetch(`http://localhost:8070/posts`, {
       method: "POST",
@@ -47,17 +51,51 @@ const MyPostWidget = ({ avatar }) => {
     const posts = await response.json();
     dispatch(setPosts({ posts }));
     setImage(null);
-    setPost("");
+    setDescription("");
   };
 
+  const changeAvatar = async (e) => {
+    try {
+      const file = image;
+      console.log('FFF'+file);
+      if (!file)
+        return setData({
+          ...data,
+          err: "No files were uploaded.",
+          success: "",
+        });
+
+      if (file.size > 1024 * 1024)
+        return setData({ ...data, err: "Size too large.", success: "" });
+
+      if (file.type !== "image/jpeg" && file.type !== "image/png")
+        return setData({
+          ...data,
+          err: "File format is incorrect.",
+          success: "",
+        });
+
+      let formData2 = new FormData();
+      formData2.append("file", file);
+
+     //upload image to cloudinary
+      const res = await axios.post("http://localhost:8070/images/upload", formData2, {
+      });
+
+      setImagepath(res.data.url);
+    } catch (err) {
+      setData({ ...data, err: err.response.data.msg, success: "" });
+    }
+  };
+  
   return (
     <WidgetWrapper>
       <StyleFlex gap="1.5rem">
         <UserImage avatar={avatar} />
         <InputBase
           placeholder="What's on your mind..."
-          onChange={(e) => setPost(e.target.value)}
-          value={savedBy}
+          onChange={(e) => setDescription(e.target.value)}
+          value={description}
           sx={{
             width: "100%",
             backgroundColor:"white",
@@ -77,7 +115,7 @@ const MyPostWidget = ({ avatar }) => {
           <Dropzone
             acceptedFiles=".jpg,.jpeg,.png"
             multiple={false}
-            onDrop={(acceptedFiles) => setImage(acceptedFiles[0])}
+            onDrop={(acceptedFiles) =>setImage(acceptedFiles[0])}
           >
             {({ getRootProps, getInputProps }) => (
               <StyleFlex>
@@ -109,6 +147,7 @@ const MyPostWidget = ({ avatar }) => {
               </StyleFlex>
             )}
           </Dropzone>
+         
         </Box>
       )}
 
@@ -135,7 +174,7 @@ const MyPostWidget = ({ avatar }) => {
         )}
 
         <Button
-          disabled={!savedBy}
+          // disabled={!description && !image}
           onClick={handlePost}
           sx={{
             fontWeight: "bold",

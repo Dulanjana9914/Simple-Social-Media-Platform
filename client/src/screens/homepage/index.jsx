@@ -11,6 +11,7 @@ const HomePage = () => {
   const { _id,name,username, avatar } = useSelector((state) => state.user);
   const logo = "https://res.cloudinary.com/dl99x/image/upload/v1674659975/attachment_86137168_nttz7u.png";
   const dispatch = useDispatch();
+  
   return (
     <Box>
       <Navbar />

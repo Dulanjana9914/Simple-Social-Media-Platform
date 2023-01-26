@@ -1,19 +1,20 @@
 import Posts from "../models/postModel.js";
 import User from "../models/userModel.js";
-const date = new Date().toJSON().slice(0, 10).replace(/-/g, "-");
-const savedDate = date.toString();
+const date = new Date();
+  //.toJSON().slice(0, 10).replace(/-/g, "-");
+const savedDate = date;
 
 //Add a post
 export const addPost = async (req, res) => {
   try {
-    const { userId, picture,savedBy } = req.body;
-      const user = await User.findById(userId);
-    
-      const newPost = new Posts({
+    const { userId, picture,savedBy,description } = req.body;
+    await User.findById(userId);
+    const newPost = new Posts({
       userId,
       picture,
       savedDate,
       savedBy,
+      description,
       likes: {}
     });
     await newPost.save();
@@ -26,7 +27,7 @@ export const addPost = async (req, res) => {
 };
 
 //Show All Posts
-export const getAllPosts = async (req, res) => {
+export const getAllPosts = async (req,res) => {
   try {
     const post = await Posts.find();
     res.status(200).json(post);

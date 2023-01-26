@@ -16,6 +16,7 @@ import { register } from "./controllers/auth.js";
 import loginRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
+import upload1 from "./controllers/uploadCtrl.js";
 
 //Configure
 const __filename = fileURLToPath(import.meta.url);
@@ -44,10 +45,11 @@ const upload = multer({ storage });
 
 //Routes
 app.post("/auth/register", upload.single("avatar"), register);
-app.post("/posts", verifyToken, upload.single("picture"), addPost);
+app.post("/posts",  upload.single("picture"), addPost);
 app.use("/auth", loginRoutes);
 app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
+app.use("/images/upload", upload1.upload);
 
 //Mongoose connection
 const PORT = process.env.PORT || 3001;  //keep backup port to run the server

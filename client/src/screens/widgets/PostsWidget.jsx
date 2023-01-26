@@ -33,6 +33,7 @@ const PostsWidget = () => {
           picture,
           savedDate,
           savedBy,
+          description,
           likes
         }) => (
           <PostWidget
@@ -42,6 +43,7 @@ const PostsWidget = () => {
             picture={picture}
             savedDate={savedDate}
             savedBy={savedBy}
+            description={description}
             likes={likes}
           />
         )

@@ -80,6 +80,11 @@ const MyPostWidget = ({ avatar }) => {
 
      //upload image to cloudinary
       const res = await axios.post("http://localhost:8070/images/upload", formData2, {
+        headers: {
+           Authorization: `Bearer ${token}` ,
+          "content-type": "multipart/form-data"      
+        },
+        
       });
 
       setImagepath(res.data.url);

@@ -21,8 +21,13 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state";
 import axios from "axios";
+import { showSuccessMsg, showErrMsg } from "../../utils/notification/Notification";
 
 const MyPostWidget = ({ avatar }) => {
+    const initialState = {
+    err: "",
+    success: ""
+   }
   const dispatch = useDispatch();
   const [isImage, setIsImage] = useState(false);
   const [image, setImage] = useState(null);
@@ -30,49 +35,54 @@ const MyPostWidget = ({ avatar }) => {
   const { _id,username } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
-  const [imagepath, setImagepath] = useState("");
-  const [data, setData] = useState("");
-  
-  const handlePost = async () => {
-    const formData = new FormData();
-    formData.append("userId", _id);
-    if (image) {
-      await changeAvatar();
-      formData.append("picture",imagepath);
-    }
-     formData.append("savedBy", username);
-     formData.append("description", description);
+  const [data, setData] = useState(initialState);
+  const { err, success } = data;
+  const userId = _id;
+  const savedBy = username;
+  let picture="";
 
-    const response = await fetch(`http://localhost:8070/posts`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-      body: formData,
-    });
-    const posts = await response.json();
-    dispatch(setPosts({ posts }));
-    setImage(null);
-    setDescription("");
+  const handlePost = async () => {
+    if (image) {
+      await changeAvatar();  
+    }
+   
+     if(description!=="" || picture!==""){
+      await axios.post("http://localhost:8070/posts", {
+        userId,
+        picture,
+        savedBy,
+        description,
+      },
+      ).then((res) => {
+        const posts = res.data;
+        dispatch(setPosts({ posts }));
+        setImage(null);
+        setDescription("");
+        setData({ ...data, err: "", success: res.data.msg });
+      });
+    }
   };
 
   const changeAvatar = async (e) => {
     try {
       const file = image;
-      console.log('FFF'+file);
-      if (!file)
+     
+      if (!file) 
         return setData({
           ...data,
-          err: "No files were uploaded.",
+          err:"No files were uploaded.",
           success: "",
         });
-
+       
+              
       if (file.size > 1024 * 1024)
         return setData({ ...data, err: "Size too large.", success: "" });
-
+        
       if (file.type !== "image/jpeg" && file.type !== "image/png")
         return setData({
           ...data,
-          err: "File format is incorrect.",
-          success: "",
+          err:"Please upload a JPEG or PNG file.",
+          success: "",  
         });
 
       let formData2 = new FormData();
@@ -86,8 +96,8 @@ const MyPostWidget = ({ avatar }) => {
         },
         
       });
+      picture = res.data.url;
 
-      setImagepath(res.data.url);
     } catch (err) {
       setData({ ...data, err: err.response.data.msg, success: "" });
     }
@@ -97,6 +107,10 @@ const MyPostWidget = ({ avatar }) => {
     <WidgetWrapper>
       <StyleFlex gap="1.5rem">
         <UserImage avatar={avatar} />
+        <div>
+        {err && showErrMsg(err)}
+        {success && showSuccessMsg(success)}
+         </div>
         <InputBase
           placeholder="What's on your mind..."
           onChange={(e) => setDescription(e.target.value)}
@@ -179,7 +193,7 @@ const MyPostWidget = ({ avatar }) => {
         )}
 
         <Button
-          // disabled={!description && !image}
+           disabled={!description && !image}
           onClick={handlePost}
           sx={{
             fontWeight: "bold",

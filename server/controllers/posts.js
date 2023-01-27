@@ -1,7 +1,6 @@
 import Posts from "../models/postModel.js";
 import User from "../models/userModel.js";
 const date = new Date();
-  //.toJSON().slice(0, 10).replace(/-/g, "-");
 const savedDate = date;
 
 //Add a post

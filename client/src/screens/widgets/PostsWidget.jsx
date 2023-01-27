@@ -7,7 +7,8 @@ const PostsWidget = () => {
   const dispatch = useDispatch();
   const posts = useSelector((state) => state.posts);
   const token = useSelector((state) => state.token);
-  const newposts=posts.slice(0).reverse();
+  const newposts = posts.slice(0).reverse();
+  
   const getPosts = async () => {
     const response = await fetch("http://localhost:8070/posts", {
       method: "GET",

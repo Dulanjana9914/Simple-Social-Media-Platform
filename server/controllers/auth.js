@@ -69,7 +69,7 @@ export const register = async (req, res) => {
 
     const saltpwd = await bcrypt.genSalt();
     const passwordHash = await bcrypt.hash(password, saltpwd);
-    console.log("PPADWP" + captcha);
+    
     
     //validate captcha
     await axios(
@@ -77,7 +77,7 @@ export const register = async (req, res) => {
        url:`https://www.google.com/recaptcha/api/siteverify?secret=${captcha_KEY}&response=${captcha}`,
        method: 'POST',
       }).then(async({data}) => {
-         console.log(data);
+       
         if (data.success) {
         const newUser = new User({
            name,
@@ -133,7 +133,7 @@ export const login = async (req, res) => {
        url:`https://www.google.com/recaptcha/api/siteverify?secret=${captcha_KEY}&response=${captcha}`,
        method: 'POST',
       }).then(async({data}) => {
-         console.log(data);
+       
         if (data.success) {
           const token = jwt.sign({ id: user._id }, process.env.ACCESS_TOKEN_SECRET);
           res.status(200).json({ msg: "Login success! ", token, user });

@@ -17,6 +17,7 @@ import loginRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
 import upload1 from "./controllers/uploadCtrl.js";
+import fileUpload from "express-fileupload";
 
 //Configure
 const __filename = fileURLToPath(import.meta.url);
@@ -25,6 +26,7 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
+app.use(fileUpload({ useTempFiles: true }));
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(morgan("common"));

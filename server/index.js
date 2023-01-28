@@ -56,7 +56,7 @@ app.use("/images/upload", upload1.upload);
 //Mongoose connection
 const PORT = process.env.PORT || 3001;  //keep backup port to run the server
 mongoose
-    .connect(process.env.MONGODB_URL, {
+    .connect(`mongodb://mongodb:27017/docker-db`, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     })
